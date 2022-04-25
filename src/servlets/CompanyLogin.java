@@ -1,0 +1,34 @@
+package servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/CompanyLogin")
+public class CompanyLogin extends HttpServlet {
+
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int cid=Integer.parseInt(request.getParameter("cid"));
+		String password=request.getParameter("password");
+		String email=request.getParameter("email");
+		try {
+			HttpSession session=request.getSession();
+			dao.DbConnect db=new dao.DbConnect();
+			String c_name=db.getCompanyLogin(cid, email, password);
+			if(c_name!=null) {
+				session.setAttribute("c_email",email);
+				session.setAttribute("c_name",c_name);
+				response.sendRedirect("CompanyHome.jsp");
+			}else {
+				session.setAttribute("msg","Wrong entries!");
+				response.sendRedirect("Company.jsp");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
